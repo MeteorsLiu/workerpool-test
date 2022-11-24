@@ -7,7 +7,7 @@ import (
 )
 
 func TestWorker(t *testing.T) {
-	w := NewPool(1, 1, 1)
+	w := NewPool(1, 1024, 1)
 
 	w.Schedule(func() {
 		t.Log(1)
@@ -80,7 +80,7 @@ func BenchmarkNaive(b *testing.B) {
 func BenchmarkPool(b *testing.B) {
 	var wg sync.WaitGroup
 	wg.Add(b.N)
-	w := NewPool(10000, 1024, 10000)
+	w := NewPool(10000, 10000, 10000)
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

@@ -2,6 +2,7 @@ package worker
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -61,7 +62,10 @@ func (p *Pool) schedule(task func(), timeout <-chan time.Time) error {
 }
 
 func (p *Pool) worker(task func()) {
-	defer func() { <-p.sem }()
+	defer func() {
+		<-p.sem
+		log.Println("sem!")
+	}()
 
 	task()
 
