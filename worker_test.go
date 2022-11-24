@@ -38,7 +38,20 @@ func TestWorker(t *testing.T) {
 		w.Schedule(func() {
 			t.Log(<-ch)
 		})
-		ch <- i
+		ch <- i + 1
 	}
 	<-time.After(time.Minute)
+}
+
+func TestSeq(t *testing.T) {
+	w := NewPool(1024, 1024, 1024)
+	ch := make(chan int)
+	for i := 0; i < 100; i++ {
+		w.Schedule(func() {
+			t.Log(<-ch)
+		})
+		ch <- i + 1
+	}
+	<-time.After(time.Minute)
+
 }
