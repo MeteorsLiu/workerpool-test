@@ -3,6 +3,7 @@ package worker
 import (
 	"sync"
 	"testing"
+	"time"
 )
 
 func TestWorker(t *testing.T) {
@@ -60,4 +61,33 @@ func TestSeq(t *testing.T) {
 	}
 	wg.Wait()
 
+}
+
+func BenchmarkNaive(b *testing.B) {
+	var wg sync.WaitGroup
+	wg.Add(b.N)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		go func() {
+			defer wg.Done()
+			time.Sleep(time.Millisecond)
+		}()
+	}
+	wg.Wait()
+}
+
+func BenchmarkPool(b *testing.B) {
+	var wg sync.WaitGroup
+	wg.Add(b.N)
+	w := NewPool(1024, 1024, 1024)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Schedule(func() {
+			defer wg.Done()
+			time.Sleep(time.Millisecond)
+		})
+	}
+	wg.Wait()
 }
