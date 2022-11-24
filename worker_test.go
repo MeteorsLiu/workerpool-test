@@ -1,12 +1,13 @@
 package worker
 
 import (
+	"runtime"
 	"testing"
 	"time"
 )
 
 func TestWorker(t *testing.T) {
-	w := NewPool(8, 1024, 8)
+	w := NewPool(runtime.NumCPU(), 1024, runtime.NumCPU())
 
 	w.Schedule(func() {
 		t.Log(1)
