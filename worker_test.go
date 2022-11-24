@@ -6,7 +6,7 @@ import (
 )
 
 func TestWorker(t *testing.T) {
-	w := NewPool(1, 1024, 1)
+	w := NewPool(1, 1, 1)
 
 	w.Schedule(func() {
 		t.Log(1)
