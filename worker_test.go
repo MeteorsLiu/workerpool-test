@@ -1,6 +1,7 @@
 package worker
 
 import (
+	"sync"
 	"testing"
 	"time"
 )
@@ -33,14 +34,16 @@ func TestWorker(t *testing.T) {
 		t.Log(8)
 	})
 
-	ch := make(chan int)
+	var wg sync.WaitGroup
+
 	for i := 0; i < 50; i++ {
+		wg.Add(1)
 		w.Schedule(func() {
-			t.Log(<-ch)
+			defer wg.Done()
+			t.Log(i)
 		})
-		ch <- i + 1
 	}
-	<-time.After(time.Minute)
+	wg.Wait()
 }
 
 func TestSeq(t *testing.T) {
