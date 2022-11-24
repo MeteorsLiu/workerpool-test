@@ -32,5 +32,13 @@ func TestWorker(t *testing.T) {
 	w.Schedule(func() {
 		t.Log(8)
 	})
+
+	ch := make(chan int)
+	for i := 0; i < 50; i++ {
+		w.Schedule(func() {
+			t.Log(<-ch)
+		})
+		ch <- i
+	}
 	<-time.After(time.Minute)
 }
