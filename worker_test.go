@@ -65,10 +65,10 @@ func TestSeq(t *testing.T) {
 
 func BenchmarkNaive(b *testing.B) {
 	var wg sync.WaitGroup
-	wg.Add(10000)
+	wg.Add(b.N)
 	b.ReportAllocs()
 	b.ResetTimer()
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < b.N; i++ {
 		go func() {
 			defer wg.Done()
 			time.Sleep(time.Millisecond)
@@ -79,11 +79,11 @@ func BenchmarkNaive(b *testing.B) {
 
 func BenchmarkPool(b *testing.B) {
 	var wg sync.WaitGroup
-	wg.Add(10000)
+	wg.Add(b.N)
 	w := NewPool(10000, 10000, 10000)
 	b.ReportAllocs()
 	b.ResetTimer()
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < b.N; i++ {
 		w.Schedule(func() {
 			defer wg.Done()
 			time.Sleep(time.Millisecond)
