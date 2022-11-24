@@ -3,7 +3,6 @@ package worker
 import (
 	"sync"
 	"testing"
-	"time"
 )
 
 func TestWorker(t *testing.T) {
@@ -35,13 +34,14 @@ func TestWorker(t *testing.T) {
 	})
 
 	var wg sync.WaitGroup
-
+	ch := make(chan int)
+	wg.Add(50)
 	for i := 0; i < 50; i++ {
-		wg.Add(1)
 		w.Schedule(func() {
 			defer wg.Done()
-			t.Log(i)
+			t.Log(<-ch)
 		})
+		ch <- i + 1
 	}
 	wg.Wait()
 }
@@ -49,12 +49,15 @@ func TestWorker(t *testing.T) {
 func TestSeq(t *testing.T) {
 	w := NewPool(1024, 1024, 1024)
 	ch := make(chan int)
+	var wg sync.WaitGroup
+	wg.Add(100)
 	for i := 0; i < 100; i++ {
 		w.Schedule(func() {
+			defer wg.Done()
 			t.Log(<-ch)
 		})
 		ch <- i + 1
 	}
-	<-time.After(time.Minute)
+	wg.Wait()
 
 }
