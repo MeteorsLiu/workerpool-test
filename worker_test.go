@@ -71,6 +71,8 @@ func BenchmarkNaive(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		go func() {
 			defer wg.Done()
+			// make buf in stack
+			_ = make([]byte, 1024)
 			time.Sleep(time.Millisecond)
 		}()
 	}
@@ -86,6 +88,8 @@ func BenchmarkPool(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		w.Schedule(func() {
 			defer wg.Done()
+			// make buf in stack
+			_ = make([]byte, 1024)
 			time.Sleep(time.Millisecond)
 		})
 	}
